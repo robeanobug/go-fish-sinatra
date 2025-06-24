@@ -46,9 +46,11 @@ class Server < Sinatra::Base
   end
 
   get '/game' do
+    # binding.irb
     redirect '/' if self.class.game.nil?
     respond_to do |f|
       f.json {
+        return error 401 if session[:current_user].nil?
         json api_key: session[:current_user].api_key
         json players: self.class.game.players
       }
@@ -57,12 +59,8 @@ class Server < Sinatra::Base
   end
 
   get '/play' do
-    response_to do |f|
-      f.json {
-        json api_key: session[:current_user].api_key
-        json players: self.class.game.players
-      }
-      f.html { slim :game, locals: { game: self.class.game, current_user: session[:current_user] } }
+    respond_to do |f|
+      f.html { slim :game, locals: { play_round: self.class.game.play_round, game: self.class.game, current_user: session[:current_user] } }
     end
   end
 
@@ -75,5 +73,9 @@ class Server < Sinatra::Base
     player = Player.new(params['name'])
     self.class.game.add_player(player)
     player
+  end
+
+  def auth
+    Rack::Auth::Basic::Request.new(request.env)
   end
 end
