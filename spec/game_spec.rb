@@ -22,4 +22,10 @@ RSpec.describe Game do
     setup_game_with_players
     expect(game.empty?).to be false 
   end
+  it 'increments a round_counter' do
+    setup_game_with_players
+    expect(game.round_count).to eq 0
+    game.play_round
+    expect(game.round_count).to eq 1
+  end
 end
