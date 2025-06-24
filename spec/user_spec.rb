@@ -4,7 +4,7 @@ require_relative '../lib/player'
 RSpec.describe User do
   let(:player) { Player.new("Player")}
   let(:user) { User.new(player, "key") }
-  fit "has a player and an api_key" do
+  it "has a player and an api_key" do
     expect(user.player).to be_a(Player)
     expect(user.api_key).to eq("key")
   end
