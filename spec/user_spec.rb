@@ -1,8 +1,6 @@
 require 'spec_helper'
 require_relative '../lib/user'
 require_relative '../lib/player'
-
-
 RSpec.describe User do
   let(:player) { Player.new("Player")}
   let(:user) { User.new(player, "key") }
