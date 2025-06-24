@@ -11,7 +11,7 @@ RSpec.describe Server do
   before do
     Capybara.app = Server.new
   end
-  fit 'is possible to join a game' do
+  it 'is possible to join a game' do
     visit '/'
     fill_in :name, with: 'John'
     click_on 'Join'
@@ -28,7 +28,7 @@ RSpec.describe Server do
       session.fill_in :name, with: player_name
       session.click_on 'Join'
       expect(session).to have_content('Players')
-      expect(session).to have_css('b', text: player_name)
+      expect(session).to have_css('li', text: player_name)
     end
     expect(session2).to have_content('Player 1')
     session1.driver.refresh
@@ -37,7 +37,7 @@ RSpec.describe Server do
 
   include Rack::Test::Methods
   def app; Server.new; end
-  it 'returns game status via API' do
+  fit 'returns game status via API' do
     post '/join', { 'name' => 'Caleb' }.to_json, {
       'Accept' => 'application/json',
       'CONTENT_TYPE' => 'application/json'

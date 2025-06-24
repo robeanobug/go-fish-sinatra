@@ -1,3 +1,6 @@
 body
   h1 Go Fish Lobby
-  = current_player.name
+  span Players:
+  ul
+  - @@game.players.each do |player|
+    li = "Hello, #{player.name}! Waiting for more players..."
