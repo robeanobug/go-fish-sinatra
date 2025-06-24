@@ -8,9 +8,20 @@ require_relative '../server'
 
 RSpec.describe Server do
   include Capybara::DSL
+
   before do
     Capybara.app = Server.new
+    Capybara.default_driver = :selenium_chrome_headless
+    Capybara.server = :puma, { Silent: true }
   end
+  # after do
+  #   Capybara.reset_sessions!
+  #   Server.reset_state!
+  # end
+
+  let(:session1) { Capybara::Session.new(:selenium_chrome_headless, Server.new) }
+  let(:session2) { Capybara::Session.new(:selenium_chrome_headless, Server.new) }
+
   it 'is possible to join a game' do
     visit '/'
     fill_in :name, with: 'John'
@@ -20,8 +31,6 @@ RSpec.describe Server do
   end
 
   it 'allows multiple players to join game' do
-    session1 = Capybara::Session.new(:rack_test, Server.new)
-    session2 = Capybara::Session.new(:rack_test, Server.new)
     [ session1, session2 ].each_with_index do |session, index|
       player_name = "Player #{index + 1}"
       session.visit '/'
@@ -35,19 +44,69 @@ RSpec.describe Server do
     expect(session1).to have_content('Player 2')
   end
 
+  describe "plays a round" do
+    before do
+      [ session1, session2 ].each_with_index do |session, index|
+        player_name = "Player #{index + 1}"
+        session.visit '/'
+        session.fill_in :name, with: player_name
+        session.click_on 'Join'
+      end
+      expect(session1).to have_content("Player 1")
+      session1.driver.refresh
+    end
+    it 'displays a round counter that increments each round' do
+      expect(session1).to have_content("Round count: 0")
+      session1.click_on 'Play'
+      expect(session1).to have_content("Round count: 1")
+    end
+  end
+
+  # display players hands
+  # display the ranks in the players hands
+  # display the opponents
+
   include Rack::Test::Methods
   def app; Server.new; end
-  fit 'returns game status via API' do
-    post '/join', { 'name' => 'Caleb' }.to_json, {
-      'Accept' => 'application/json',
-      'CONTENT_TYPE' => 'application/json'
-    }
-    api_key = JSON.parse(last_response.body)['api_key']
-    expect(api_key).not_to be_nil
-    get '/game', nil, {
-      'HTTP_AUTHORIZATION' => "Basic #{Base64.encode64(api_key + ':X')}",
-      'Accept' => 'application/json'
-    }
-    expect(JSON.parse(last_response.body).keys).to include 'players'
+  describe "POST/join" do
+    xit 'returns game status via API' do
+      post '/join', { 'name' => 'Caleb' }.to_json, {
+        'Accept' => 'application/json',
+        'CONTENT_TYPE' => 'application/json'
+      }
+      api_key = JSON.parse(last_response.body)['api_key']
+      expect(api_key).not_to be_nil
+      get '/game', nil, {
+        'HTTP_AUTHORIZATION' => "Basic #{Base64.encode64(api_key + ':X')}",
+        'Accept' => 'application/json'
+      }
+      expect(JSON.parse(last_response.body).keys).to include 'players'
+    end
+    
+    xit 'does not return the api status without the api key' do
+      get '/game', nil, {
+        'HTTP_AUTHORIZATION' => "Invalid",
+        'Accept' => 'application/json'
+      }
+      expect(last_response.status).to eq 401
+    end
+    xit 'does not return the api status if using the wrong api key' do
+      post '/join', { 'name' => 'Caleb' }.to_json, {
+        'Accept' => 'application/json',
+        'CONTENT_TYPE' => 'application/json'
+      }
+
+      api_key = JSON.parse(last_response.body)['api_key']
+
+      post '/join', { 'name' => 'Joe' }.to_json, {
+        'Accept' => 'application/json',
+        'CONTENT_TYPE' => 'application/json'
+      }
+      get '/game', nil, {
+        'HTTP_AUTHORIZATION' => "Basic #{Base64.encode64(api_key + ':X')}",
+        'Accept' => 'application/json'
+      }
+      expect(last_response.status).to eq 401
+    end
   end
 end

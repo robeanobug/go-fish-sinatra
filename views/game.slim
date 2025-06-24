@@ -3,7 +3,8 @@ body
   span Players:
   ul
   - game.players.each do |player|
-    li = "#{player.name}"
+    li = "#{ player.name }"
   form action="/play" method="get"
-    span Round count: #{round_count}
+    span Round count: 
+    = game.round_count
     button.btn.btn--primary type="submit" Play
