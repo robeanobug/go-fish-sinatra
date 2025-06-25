@@ -6,6 +6,7 @@ require 'securerandom'
 require_relative 'lib/game'
 require_relative 'lib/player'
 require_relative 'lib/user'
+require_relative 'lib/card_deck'
 
 class Server < Sinatra::Base
   enable :sessions
@@ -16,9 +17,9 @@ class Server < Sinatra::Base
     @@game ||= Game.new
   end
 
-  # def reset_state!
-  #   @@game = nil
-  # end
+  def self.reset_state!
+    @@game = nil
+  end
 
   get '/' do
     slim :index
@@ -30,7 +31,7 @@ class Server < Sinatra::Base
       f.json {
         json api_key: session[:current_user].api_key
       }
-      f.html { slim :lobby, locals: { game: self.class.game, current_player: session[:current_player] } }
+      f.html { slim :lobby, locals: { game: self.class.game, current_user: session[:current_user] } }
     end
   end
 
@@ -48,6 +49,7 @@ class Server < Sinatra::Base
   get '/game' do
     # binding.irb
     redirect '/' if self.class.game.nil?
+    self.class.game.start
     respond_to do |f|
       f.json {
         return error 401 if session[:current_user].nil?
@@ -77,5 +79,10 @@ class Server < Sinatra::Base
 
   def auth
     Rack::Auth::Basic::Request.new(request.env)
+  end
+
+  def session_key
+    return session[:api_key] unless request.content_type == 'application/json'
+    auth.username
   end
 end

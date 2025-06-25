@@ -14,13 +14,26 @@ RSpec.describe Server do
     Capybara.default_driver = :selenium_chrome_headless
     Capybara.server = :puma, { Silent: true }
   end
-  # after do
-  #   Capybara.reset_sessions!
-  #   Server.reset_state!
-  # end
+
+  after do
+    Capybara.reset_sessions!
+    Server.reset_state!
+  end
 
   let(:session1) { Capybara::Session.new(:selenium_chrome_headless, Server.new) }
   let(:session2) { Capybara::Session.new(:selenium_chrome_headless, Server.new) }
+
+  def setup_sessions_with_two_players
+    [ session1, session2 ].each_with_index do |session, index|
+      player_name = "Player #{index + 1}"
+      session.visit '/'
+      session.fill_in :name, with: player_name
+      session.click_on 'Join'
+            
+      expect(session1).to have_content("Player 1")
+      session1.driver.refresh
+    end
+  end
 
   it 'is possible to join a game' do
     visit '/'
@@ -46,14 +59,7 @@ RSpec.describe Server do
 
   describe "plays a round" do
     before do
-      [ session1, session2 ].each_with_index do |session, index|
-        player_name = "Player #{index + 1}"
-        session.visit '/'
-        session.fill_in :name, with: player_name
-        session.click_on 'Join'
-      end
-      expect(session1).to have_content("Player 1")
-      session1.driver.refresh
+      setup_sessions_with_two_players
     end
     it 'displays a round counter that increments each round' do
       expect(session1).to have_content("Round count: 0")
@@ -62,6 +68,18 @@ RSpec.describe Server do
     end
   end
 
+  describe "display hands" do
+    it 'displays hands to players' do
+      setup_sessions_with_two_players
+
+      expect(session1).to have_content("hand:")
+      expect(session1).to have_content("[")
+      expect(session2).to have_content("hand:")
+      expect(session2).to have_content("[")
+    end
+  end
+
+  # to do
   # display players hands
   # display the ranks in the players hands
   # display the opponents
