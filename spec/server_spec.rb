@@ -75,11 +75,8 @@ RSpec.describe Server do
   describe "display hands" do
     it 'displays hands to players' do
       setup_sessions_with_two_players
-
-      expect(session1).to have_content("hand:")
-      expect(session1).to have_content("[")
-      expect(session2).to have_content("hand:")
-      expect(session2).to have_content("[")
+      expect(session1).to have_content("hand: ")
+      expect(session2).to have_content("hand: ")
     end
   end
 

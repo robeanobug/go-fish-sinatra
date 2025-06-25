@@ -10,4 +10,10 @@ class Player
     return hand << cards if cards.is_a?(PlayingCard)
     cards.each { |card| hand << card }
   end
+  
+  def display_hand
+    hand.map do |card|
+      "#{card.rank} of #{card.suit}"
+    end.join(", ")
+  end
 end

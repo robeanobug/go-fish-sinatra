@@ -5,7 +5,7 @@ body
   - game.players.each do |player|
     li = "#{ player.name }"
   span Your hand:
-  = current_player.hand
+  = current_player.display_hand
   form action="/play" method="post"
     span Round count: 
     = game.round_count
