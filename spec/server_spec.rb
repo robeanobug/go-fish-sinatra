@@ -20,7 +20,7 @@ RSpec.describe Server do
     Server.reset_state!
   end
 
-  let(:session1) { Capybara::Session.new(:selenium_chrome_headless, Server.new) }
+  let(:session1) { Capybara::Session.new(:selenium_chrome, Server.new) }
   let(:session2) { Capybara::Session.new(:selenium_chrome_headless, Server.new) }
 
   def setup_sessions_with_two_players
@@ -28,11 +28,10 @@ RSpec.describe Server do
       player_name = "Player #{index + 1}"
       session.visit '/'
       session.fill_in :name, with: player_name
-      session.click_on 'Join'
-            
-      expect(session1).to have_content("Player 1")
-      session1.driver.refresh
+      session.click_on 'Join' 
     end
+    expect(session1).to have_content("Player 1")
+    session1.driver.refresh
   end
 
   it 'is possible to join a game' do
@@ -58,13 +57,18 @@ RSpec.describe Server do
   end
 
   describe "plays a round" do
-    before do
+    it 'displays a round counter that increments one round' do
       setup_sessions_with_two_players
-    end
-    it 'displays a round counter that increments each round' do
       expect(session1).to have_content("Round count: 0")
       session1.click_on 'Play'
       expect(session1).to have_content("Round count: 1")
+    end
+    it 'displays a round counter that increments more than one round' do
+      setup_sessions_with_two_players
+      expect(session1).to have_content("Round count: 0")
+      session1.click_on 'Play'
+      session1.click_on 'Play'
+      expect(session1).to have_content("Round count: 2")
     end
   end
 

@@ -45,4 +45,8 @@ class Game
   def deal_card
     deck.deal_card
   end
+
+  def started?
+    @deck.cards.count != CardDeck::DECK_COUNT
+  end
 end

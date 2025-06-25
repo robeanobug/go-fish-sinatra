@@ -38,16 +38,25 @@ RSpec.describe Game do
     expect(game.round_count).to eq 1
   end
   describe '#start' do
-  it 'should deal out the base hand size to 2 players' do
+    it 'should deal out the base hand size to 2 players' do
+      setup_game_with_two_players
+      game.start
+      # binding.irb
+      expect(game.players.first.hand.size).to eq(Game::BASE_HAND_SIZE)
+    end
+    it 'should deal out the small hand size to 4 players' do
+      setup_game_with_four_players
+      game.start
+      expect(game.players.first.hand.size).to eq(Game::SMALL_HAND_SIZE)
+    end
+  end
+  it 'should return false if game has not started' do
     setup_game_with_two_players
     game.start
-    # binding.irb
-    expect(game.players.first.hand.size).to eq(Game::BASE_HAND_SIZE)
+    expect(game.started?).to be true
   end
-  it 'should deal out the small hand size to 4 players' do
-    setup_game_with_four_players
-    game.start
-    expect(game.players.first.hand.size).to eq(Game::SMALL_HAND_SIZE)
+  it 'should return true if game has started' do
+    setup_game_with_two_players
+    expect(game.started?).to be false
   end
-end
 end
