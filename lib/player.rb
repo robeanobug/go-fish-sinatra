@@ -11,9 +11,15 @@ class Player
     cards.each { |card| hand << card }
   end
   
-  def display_hand
+  # def display_cards
+  #   hand.map do |card|
+  #     "/img/#{card.rank}#{card.suit}.svg"
+  #   end
+  # end
+
+  def ranks
     hand.map do |card|
-      "#{card.rank} of #{card.suit}"
-    end.join(", ")
+      "#{card.rank}s"
+    end.uniq
   end
 end
