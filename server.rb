@@ -25,38 +25,34 @@ class Server < Sinatra::Base
     slim :index
   end
 
-  get '/lobby' do
-    redirect :game unless self.class.game.empty?    
-    respond_to do |f|
-      f.json {
-        json api_key: session[:current_user].api_key
-      }
-      f.html { slim :lobby, locals: { game: self.class.game, current_user: session[:current_user] } }
-    end
-  end
+  # get '/lobby' do
+  #   redirect :game unless self.class.game.empty?    
+  #   respond_to do |f|
+  #     f.json {
+  #       json api_key: session[:current_user].api_key
+  #     }
+  #     f.html { slim :lobby, locals: { game: self.class.game, current_user: session[:current_user] } }
+  #   end
+  # end
 
   post '/join' do
     player = create_player
     session[:current_user] = create_user(player)
     respond_to do |f|
-      f.json {
-        json api_key: session[:current_user].api_key
-      }
-      f.html {
-        redirect '/lobby'
-      }
+      f.json { json api_key: session[:current_user].api_key }
+      f.html { redirect '/game' }
     end
   end
 
   get '/game' do
     redirect '/' if self.class.game.nil?
-    self.class.game.start unless self.class.game.started?
+    self.class.game.start if !self.class.game.started? && self.class.game.enough_players?
     respond_to do |f|
-      f.json {
+      f.json do
         return error 401 if session[:current_user].nil?
         json api_key: session[:current_user].api_key
         json players: self.class.game.players
-      }
+      end
       f.html { slim :game, locals: { game: self.class.game, current_player: find_player(session[:current_user]) } }
     end
   end
