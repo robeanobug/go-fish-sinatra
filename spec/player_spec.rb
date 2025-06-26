@@ -16,8 +16,8 @@ RSpec.describe Player do
     player.add_cards([ace_clubs, ace_hearts])
     expect(player.hand).to eq([ace_clubs, ace_hearts])
   end
-  it 'should display the hand' do
+  it 'should tell what ranks are in the player hand' do
     player.add_cards([ace_clubs, ace_hearts])
-    expect(player.display_hand).to eq("Ace of Clubs, Ace of Hearts")
+    expect(player.ranks).to eq(['Aces'])
   end
 end
