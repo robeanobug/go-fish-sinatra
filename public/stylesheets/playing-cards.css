@@ -1,0 +1,16 @@
+.playing-cards {
+    --gf-card-height: calc(var(--op-space-medium) * 10);
+    display: flex;
+    justify-content: start;
+    height: var(--gf-card-height);
+    
+    > * {
+      --negative-margin: calc(var(--op-space-scale-unit) * -3);
+      margin-left: var(--negative-margin);
+    }
+  
+    > *:first-of-type {
+      margin: 0;
+    }
+  }
+  
