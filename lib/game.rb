@@ -1,6 +1,7 @@
 class Game
   attr_accessor :players, :round_count, :deck
   REQUIRED_PLAYER_COUNT = 2
+  BASE_PLAYER_COUNT = 3
   BASE_HAND_SIZE = 7
   SMALL_HAND_SIZE = 5
 
@@ -18,8 +19,8 @@ class Game
     players << player
   end
 
-  def empty?
-    players.length < REQUIRED_PLAYER_COUNT
+  def enough_players?
+    players.length >= REQUIRED_PLAYER_COUNT
   end
 
   def play_round
@@ -27,7 +28,7 @@ class Game
   end
   
   def deal_cards
-    if players.length > 3
+    if players.length > BASE_PLAYER_COUNT
       Game::SMALL_HAND_SIZE.times do
         players.each do |player|
           player.add_cards(deal_card)
