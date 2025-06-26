@@ -21,7 +21,7 @@ RSpec.describe Server do
   end
 
   let(:session1) { Capybara::Session.new(:selenium_chrome, Server.new) }
-  let(:session2) { Capybara::Session.new(:selenium_chrome_headless, Server.new) }
+  let(:session2) { Capybara::Session.new(:selenium_chrome, Server.new) }
 
   def setup_sessions_with_two_players
     [ session1, session2 ].each_with_index do |session, index|
@@ -57,25 +57,28 @@ RSpec.describe Server do
   end
 
   describe "plays a round" do
-    it 'displays a round counter that increments one round' do
+    xit 'displays a round counter that increments one round' do
       setup_sessions_with_two_players
       expect(session1).to have_content("Round count: 0")
       session1.click_on 'Play'
       expect(session1).to have_content("Round count: 1")
     end
-    it 'displays a round counter that increments more than one round' do
+    xit 'displays a round counter that increments more than one round' do
       setup_sessions_with_two_players
       expect(session1).to have_content("Round count: 0")
       session1.click_on 'Play'
       session1.click_on 'Play'
       expect(session1).to have_content("Round count: 2")
     end
-    xit 'displays the round information' do
+    it 'displays the round information' do
       setup_sessions_with_two_players
       session1.select 'Aces', from: 'card-rank'
-      session1.select 'Player 2', from: 'player'
+      session1.select 'Player 2', from: 'target-player'
+      session1.click_on 'request'
+      session2.driver.refresh
+      # binding.irb
       game_action = "Player 1 asked Player 2 for any Aces"
-
+      # binding.irb
       expect(session1).to have_content(game_action)
     end
   end

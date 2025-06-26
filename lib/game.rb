@@ -1,18 +1,21 @@
 class Game
-  attr_accessor :players, :round_count, :deck
-  REQUIRED_PLAYER_COUNT = 2
-  BASE_PLAYER_COUNT = 3
+  attr_accessor :players, :round_count, :deck, :player_count, :current_player, :round_results
+  BASE_PLAYER_COUNT = 2
+  PLAYER_COUNT_THRESHOLD = 4
   BASE_HAND_SIZE = 7
   SMALL_HAND_SIZE = 5
 
-  def initialize(deck = CardDeck.new)
+  def initialize(player_count = BASE_PLAYER_COUNT, deck = CardDeck.new)
     @players = []
     @round_count = 0
     @deck = deck
+    @player_count = player_count
+    @round_results = []
   end
 
   def start
     deal_cards
+    self.current_player = players.first
   end
 
   def add_player(player)
@@ -20,15 +23,18 @@ class Game
   end
 
   def enough_players?
-    players.length >= REQUIRED_PLAYER_COUNT
+    players.length >= player_count
   end
 
-  def play_round
+  def play_round(requested_rank, target_player)
+    taken_cards = take_cards(requested_rank, target_player)
+    fished_card = go_fish unless taken_cards
     self.round_count += 1
+    round_results << RoundResult.new(current_player:, target_player:, requested_rank:, taken_cards:, fished_card:)
   end
   
   def deal_cards
-    if players.length > BASE_PLAYER_COUNT
+    if players.length >= PLAYER_COUNT_THRESHOLD
       Game::SMALL_HAND_SIZE.times do
         players.each do |player|
           player.add_cards(deal_card)
@@ -49,5 +55,15 @@ class Game
 
   def started?
     @deck.cards.count != CardDeck::DECK_COUNT
+  end
+
+  def take_cards(requested_rank, target_player)
+    cards = target_player.hand.select { |card| card.rank == requested_rank }
+    unless cards.empty?
+      target_player.remove_cards(cards)
+      current_player.add_cards(cards)
+      return cards
+    end
+    nil
   end
 end

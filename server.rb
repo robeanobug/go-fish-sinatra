@@ -25,16 +25,6 @@ class Server < Sinatra::Base
     slim :index
   end
 
-  # get '/lobby' do
-  #   redirect :game unless self.class.game.empty?    
-  #   respond_to do |f|
-  #     f.json {
-  #       json api_key: session[:current_user].api_key
-  #     }
-  #     f.html { slim :lobby, locals: { game: self.class.game, current_user: session[:current_user] } }
-  #   end
-  # end
-
   post '/join' do
     player = create_player
     session[:current_user] = create_user(player)
@@ -53,14 +43,19 @@ class Server < Sinatra::Base
         json api_key: session[:current_user].api_key
         json players: self.class.game.players
       end
-      f.html { slim :game, locals: { game: self.class.game, current_player: find_player(session[:current_user]) } }
+      f.html { slim :game, locals: { game: self.class.game, current_player: find_player_from_user(session[:current_user]) } }
     end
   end
 
   post '/play' do
-    self.class.game.play_round
+    target_player_name = params['target-player']
+    target_player = find_player_from_name(target_player_name)
+    requested_rank = params['card-rank'].chop
+    self.class.game.play_round(requested_rank, target_player)
     respond_to do |f|
-      f.html { redirect "/game" }
+      f.html do
+        redirect "/game"
+      end
     end
   end
 
@@ -76,10 +71,20 @@ class Server < Sinatra::Base
     player
   end
 
-  def find_player(user)
-    self.class.game.players.find do |player|
-      player.name == user.player.name
-    end
+  def find_player_from_user(user)
+    players.find { |player| player.name == user.player.name } 
+  end
+
+  def find_player_from_name(name)
+    players.find { |player| player.name == name } 
+  end
+
+  def players
+    self.class.game.players
+  end
+  
+  def game
+    self.class.game
   end
 
   def auth

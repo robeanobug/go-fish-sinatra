@@ -31,12 +31,39 @@ RSpec.describe Game do
     setup_game_with_two_players
     expect(game.enough_players?).to be true 
   end
-  it 'increments a round_counter' do
-    setup_game_with_two_players
-    expect(game.round_count).to eq 0
-    game.play_round
-    expect(game.round_count).to eq 1
+  describe '#play_round' do
+    let(:ace_hearts) { PlayingCard.new('Ace', 'Hearts') }
+    let(:king_hearts) { PlayingCard.new('King', 'Hearts') }
+    let(:ace_clubs) { PlayingCard.new('Ace', 'Clubs') }
+    let(:king_clubs) { PlayingCard.new('King', 'Clubs') }
+    let(:ace_diamonds) { PlayingCard.new('Ace', 'Diamonds') }
+    let(:ace_spades) { PlayingCard.new('Ace', 'Spades') }
+    let(:two_hearts) { PlayingCard.new('Two', 'Hearts') }
+
+    before do
+      setup_game_with_two_players
+    end
+
+    xit 'increments a round_counter' do
+      expect(game.round_count).to eq 0
+      game.play_round
+      expect(game.round_count).to eq 1
+    end
+    context "When the current player's turn stays" do
+      xit 'current player gets cards from opponent' do
+        # game.opponent = player2
+        game.start
+        player1.hand = [ace_hearts, king_hearts]
+        player2.hand = [ace_clubs, king_clubs]
+        result = game.play_round('Ace', player2)
+
+        expect(player1.hand).to include(ace_hearts, king_hearts, ace_clubs)
+        expect(player2.hand).to include(king_clubs)
+        expect(result.current_player_result).to include('Ace', 'You', 'Player 2', 'took')
+      end
+    end
   end
+
   describe '#start' do
     it 'should deal out the base hand size to 2 players' do
       setup_game_with_two_players

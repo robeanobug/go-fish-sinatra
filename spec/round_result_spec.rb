@@ -1,5 +1,5 @@
 require "spec_helper"
-require_relative '../lib/result'
+require_relative '../lib/round_result'
 require_relative '../lib/player'
 require_relative '../lib/playing_card'
 
@@ -11,10 +11,16 @@ RSpec.describe RoundResult do
   let(:fished_ace) { PlayingCard.new('Ace', 'Clubs') }
   let(:fished_two) { PlayingCard.new('2', 'Clubs') }
 
-  context 'when current player takes a card from opponent' do
-    let(:result) { Result.new(current_player: player1, opponent: player2, rank: 'Ace', taken_cards:) }
+  context 'when current player takes a card from target player' do
+    let(:result) { RoundResult.new(current_player: player1, target_player: player2, requested_rank: 'Ace', taken_cards:) }
     it 'has a current player result' do
       expect(result.current_player_result).to match /You took/i
+    end
+    it 'has a game response for bystanders' do
+      expect(result.bystanders_game_response).to include('asked', 'for')
+    end
+    xit 'has a game round result for bystanders' do
+      expect(result.bystanders_round_result).to include('')
     end
   end
 end
