@@ -24,12 +24,12 @@ RSpec.describe Game do
     expect(game.players.first).to eq(player1)
     expect(game.players.last).to eq(player2)
   end
-  it 'empty? returns true if there are less than two players' do
-    expect(game.empty?).to be true
+  it 'enough_players? returns false if there are less than two players' do
+    expect(game.enough_players?).to be false
   end
-  it 'empty? returns false if there are more than two players' do
+  it 'enough_players? returns false if there are more than two players' do
     setup_game_with_two_players
-    expect(game.empty?).to be false 
+    expect(game.enough_players?).to be true 
   end
   it 'increments a round_counter' do
     setup_game_with_two_players
