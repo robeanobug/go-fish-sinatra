@@ -70,19 +70,30 @@ RSpec.describe Server do
       session1.click_on 'Play'
       expect(session1).to have_content("Round count: 2")
     end
+    xit 'displays the round information' do
+      setup_sessions_with_two_players
+      session1.select 'Aces', from: 'card-rank'
+      session1.select 'Player 2', from: 'player'
+      game_action = "Player 1 asked Player 2 for any Aces"
+
+      expect(session1).to have_content(game_action)
+    end
   end
 
   describe "display hands" do
     it 'displays hands to players' do
       setup_sessions_with_two_players
-      expect(session1).to have_content("hand: ")
-      expect(session2).to have_content("hand: ")
+      card_rank = Server.game.players.first.hand.first.rank
+      card_suit = Server.game.players.first.hand.first.suit
+
+      expect(session1).to have_css("img[alt='#{card_rank} of #{card_suit}']")
+      expect(session2).to have_no_css("img[alt='#{card_rank} of #{card_suit}']")
     end
   end
 
   # to do
   # display players hands
-  # display the ranks in the players hands
+  # display the ranks in the current player's hands
   # display the opponents
 
   include Rack::Test::Methods
