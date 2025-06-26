@@ -20,14 +20,16 @@ div class="game-page"
     div class="feed"
       div class="feed__container"
         div class="feed__output"
-          div class="feed__bubble feed__bubble--game-action"
-            span
-              - game.round_results.each do |result|
+          - game.round_results.each do |result|
+            div class="feed__bubble feed__bubble--game-action"
+              span
                 = result.bystanders_game_response
-          div class="feed__response"
-            i class="icon ph ph-arrow-bend-down-right"
-            div class="feed__bubble feed__bubble--game-response"
-              span Game Round Result
+          - game.round_results.each do |result|
+            div class="feed__response"
+              i class="icon ph ph-arrow-bend-down-right"
+              div class="feed__bubble feed__bubble--game-response"
+                span
+                  = result.bystanders_round_result
           div class="feed__response"
             i class="icon ph ph-arrow-bend-down-right"
             div class="feed__bubble feed__bubble--player-action"

@@ -13,9 +13,14 @@ class RoundResult
     "#{current_player.name} asked #{ target_player.name } for any #{ requested_rank }s."
   end
 
-  # def bystanders_game_round_result
-    
-  # end
+  def bystanders_round_result
+    return "Go fish. #{target_player.name} did not have any #{requested_rank}s." if taken_cards.nil?
+    if taken_cards.count == 1
+      "#{current_player.name} took an #{requested_rank} from #{target_player.name}."
+    else
+      "#{current_player.name} took #{taken_cards.count} #{requested_rank}s from #{target_player.name}."
+    end
+  end
 
   # def bystanders_played_action
     

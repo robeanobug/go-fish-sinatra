@@ -19,8 +19,14 @@ RSpec.describe RoundResult do
     it 'has a game response for bystanders' do
       expect(result.bystanders_game_response).to include('asked', 'for')
     end
-    xit 'has a game round result for bystanders' do
-      expect(result.bystanders_round_result).to include('')
+    it 'has a game round result for bystanders' do
+      expect(result.bystanders_round_result).to include('took')
+    end
+  end
+  context 'when current player goes fish' do
+    let(:result) { RoundResult.new(current_player: player1, target_player: player2, requested_rank: 'Ace', fished_card: fished_two) }
+    it 'has a game round result for bystanders' do
+      expect(result.bystanders_round_result).to include('fish')
     end
   end
 end

@@ -70,16 +70,23 @@ RSpec.describe Server do
       session1.click_on 'Play'
       expect(session1).to have_content("Round count: 2")
     end
-    it 'displays the round information' do
+    it 'displays the game response' do
       setup_sessions_with_two_players
       session1.select 'Aces', from: 'card-rank'
       session1.select 'Player 2', from: 'target-player'
       session1.click_on 'request'
       session2.driver.refresh
-      # binding.irb
       game_action = "Player 1 asked Player 2 for any Aces"
-      # binding.irb
       expect(session1).to have_content(game_action)
+    end
+    it 'displays the game round result' do
+      setup_sessions_with_two_players
+      session1.select 'Aces', from: 'card-rank'
+      session1.select 'Player 2', from: 'target-player'
+      session1.click_on 'request'
+      session2.driver.refresh
+      game_round_result = "Player 1 took 2 Aces from Player 2"
+      expect(session1).to have_content(game_round_result)
     end
   end
 
