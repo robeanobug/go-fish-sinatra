@@ -9,8 +9,11 @@ class Player
   end
 
   def add_cards(cards)
-    return hand << cards if cards.is_a?(PlayingCard)
-    cards.each { |card| hand << card }
+    if cards.is_a?(PlayingCard)
+      hand << cards
+    else
+      cards.each { |card| hand << card }
+    end
     create_book_if_possible
   end
   

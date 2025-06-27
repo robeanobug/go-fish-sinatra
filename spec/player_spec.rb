@@ -21,9 +21,15 @@ RSpec.describe Player do
     player.add_cards([ace_clubs, ace_hearts])
     expect(player.hand).to eq([ace_clubs, ace_hearts])
   end
-  it 'will create a book if possible' do
+  it 'will create a book if possible if multiple cards are added' do
     player.hand = [ace_clubs, ace_hearts]
     player.add_cards([ace_diamonds, ace_spades])
+    expect(player.books.flatten).to include(ace_clubs, ace_hearts, ace_diamonds, ace_spades)
+    expect(player.books.length).to eq 1
+  end
+  it 'will create a book if possible if only a playing card is added to the hand' do
+    player.hand = [ace_clubs, ace_hearts, ace_diamonds]
+    player.add_cards(ace_spades)
     expect(player.books.flatten).to include(ace_clubs, ace_hearts, ace_diamonds, ace_spades)
     expect(player.books.length).to eq 1
   end
