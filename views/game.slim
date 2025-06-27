@@ -13,15 +13,14 @@ div class="game-page"
             li = "Hello, #{player.name}! Waiting for more players..."
   div class="panel panel--side"
     div class="panel__header panel__header--alt"
-      
-      / form action="/play" method="post"
-      /   span Round count: 
-      /   = game.round_count
-      /   button.btn.btn--primary type="submit" Play
+      span class="game_heading" Game Feed
+      - if game.started?
+        div class="badge badge--primary"
+          = "#{game.current_player.name}'s Turn"
     div class="feed"
       div class="feed__container"
         div class="feed__output"
-          - game.round_results.each do |result|
+          - game.rounds_results.each do |result|
             div class="feed__bubble feed__bubble--game-action"
               span
                 = result.bystanders_game_response

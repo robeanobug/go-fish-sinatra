@@ -30,9 +30,9 @@ class RoundResult
     
   # end
 
-  def current_player_result
+  def current_player_round_result
     return "You took #{ taken_cards_array } from #{ target_player.name }." if taken_cards
-    # "Go fish! You drew a #{ fished_card.rank } of #{ fished_card.suit }." if fished_card
+    "Go fish! You drew a #{ fished_card.rank } of #{ fished_card.suit }." if fished_card
   end
 
   private

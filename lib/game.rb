@@ -1,7 +1,7 @@
 require_relative '../lib/round_result'
 
 class Game
-  attr_accessor :players, :round_count, :deck, :player_count, :current_player, :round_results
+  attr_accessor :players, :round_count, :deck, :player_count, :current_player, :rounds_results
   BASE_PLAYER_COUNT = 2
   PLAYER_COUNT_THRESHOLD = 4
   BASE_HAND_SIZE = 7
@@ -11,7 +11,7 @@ class Game
     @players = []
     @deck = deck
     @player_count = player_count
-    @round_results = []
+    @rounds_results = []
   end
 
   def start
@@ -30,7 +30,9 @@ class Game
   def play_round(requested_rank, target_player)
     taken_cards = take_cards(requested_rank, target_player)
     fished_card = go_fish unless taken_cards
-    round_results << RoundResult.new(current_player:, target_player:, requested_rank:, taken_cards:, fished_card:)
+    rounds_results << RoundResult.new(current_player:, target_player:, requested_rank:, taken_cards:, fished_card:)
+    change_turns_if_possible(requested_rank, fished_card)
+    rounds_results
   end
   
   def deal_cards
@@ -57,6 +59,14 @@ class Game
     card = deal_card
     current_player.add_cards(card)
     card
+  end
+
+  def change_turns_if_possible(requested_rank, fished_card)
+    return if fished_card.nil?
+    unless requested_rank == fished_card.rank
+      current_player_index = players.index(current_player) + 1
+      self.current_player = players[current_player_index % players.count]
+    end
   end
 
   def started?

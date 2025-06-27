@@ -52,7 +52,8 @@ RSpec.describe Game do
 
         expect(player1.hand).to include(ace_hearts, king_hearts, ace_clubs)
         expect(player2.hand).to include(king_clubs)
-        expect(result.last.current_player_result).to include('Ace', 'You', 'Player 2', 'took')
+
+        expect(result.last.current_player_round_result).to include('Ace', 'You', 'Player 2', 'took')
       end
     end
     context "When the current player's turn changes" do
@@ -61,6 +62,9 @@ RSpec.describe Game do
         player1.hand = [two_hearts]
         player2.hand = [ace_clubs, king_clubs]
         game.deck.add_card(ace_hearts)
+        result = game.play_round('Twos', player2)
+        expect(result.last.current_player_round_result).to include("Go fish")
+        expect(game.current_player).to eq(player2)
       end
     end
   end
@@ -69,7 +73,6 @@ RSpec.describe Game do
     it 'should deal out the base hand size to 2 players' do
       setup_game_with_two_players
       game.start
-      # binding.irb
       expect(game.players.first.hand.size).to eq(Game::BASE_HAND_SIZE)
     end
     it 'should deal out the small hand size to 4 players' do

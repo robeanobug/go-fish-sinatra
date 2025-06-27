@@ -14,7 +14,7 @@ RSpec.describe RoundResult do
   context 'when current player takes a card from target player' do
     let(:result) { RoundResult.new(current_player: player1, target_player: player2, requested_rank: 'Ace', taken_cards:) }
     it 'has a current player result' do
-      expect(result.current_player_result).to match /You took/i
+      expect(result.current_player_round_result).to match /You took/i
     end
     it 'has a game response for bystanders' do
       expect(result.bystanders_game_response).to include('asked', 'for')
