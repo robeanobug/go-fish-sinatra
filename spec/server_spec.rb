@@ -21,8 +21,8 @@ RSpec.describe Server do
     Server.reset_state!
   end
 
-  let(:session1) { Capybara::Session.new(:selenium_chrome, Server.new) }
-  let(:session2) { Capybara::Session.new(:selenium_chrome, Server.new) }
+  let(:session1) { Capybara::Session.new(:selenium_chrome_headless, Server.new) }
+  let(:session2) { Capybara::Session.new(:selenium_chrome_headless, Server.new) }
 
   def setup_sessions_with_two_players
     [ session1, session2 ].each_with_index do |session, index|
@@ -139,9 +139,26 @@ RSpec.describe Server do
     end
   end
 describe 'display player content' do
-    fit 'has an accordion' do
+    it 'has an accordion' do
       setup_sessions_with_two_players
       expect(session1).to have_css(".accordion")
+    end
+    it 'shows the player name' do
+      setup_sessions_with_two_players
+      current_player_name = Server.game.players.first.name
+      opponent_name = Server.game.players.last.name
+      session1.within ".players-content" do
+        expect(session1).to have_content(opponent_name)
+        expect(session1).to have_no_content(current_player_name)
+      end
+    end
+    it 'shows the player card count and books count' do
+      setup_sessions_with_two_players
+      opponent = Server.game.players.last
+      session1.within ".players-content" do
+        expect(session1).to have_content(opponent.hand.count)
+        expect(session1).to have_content(opponent.books.count)
+      end
     end
   end
 

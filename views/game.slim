@@ -7,6 +7,7 @@ div class="game-page"
         span class="game__heading game__heading--players" Players:
         - if game.enough_players?
           - game.players.each do |player|
+            - next if player == current_player
             details class="accordion accordion--player"
               summary
                 .accordion__label
@@ -41,7 +42,7 @@ div class="game-page"
     div class="feed"
       div class="feed__container"
         div class="feed__output"
-          - game.rounds_results.each do |result|
+          - game.rounds_results.reverse.each do |result|
             div class="feed__bubble feed__bubble--game-action"
               span
                 = result.bystanders_game_response
