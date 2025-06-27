@@ -72,6 +72,7 @@ RSpec.describe Server do
         expect(session1).to have_no_css(".feed__bubble--player-action")
       end
     end
+
     context 'when the current player goes fishing' do
       before do
         setup_sessions_with_two_players
@@ -105,6 +106,24 @@ RSpec.describe Server do
         expect(session1).to_not have_selector(:field, 'target-player', readonly: true)
         expect(session2).to have_selector(:field, 'card-rank', readonly: true)
         expect(session2).to have_selector(:field, 'target-player', readonly: true)
+      end
+    end
+
+    context "When a player creates a book" do
+      before do
+        setup_sessions_with_two_players
+        session1.select 'Aces', from: 'card-rank'
+        session1.select 'Player 2', from: 'target-player'
+        session1.click_on 'request'
+        session2.driver.refresh
+      end
+      fit 'should display the book' do
+        book_card = Server.game.current_player.books.first.first
+        card_rank = book_card.rank
+
+        session1.within ".playing-cards--books" do   
+          expect(session1).to have_css("img[alt='Book of #{card_rank}s']")
+        end
       end
     end
   end

@@ -11,7 +11,7 @@ div class="game-page"
         - else
           - game.players.each do |player|
             li = "Hello, #{player.name}! Waiting for more players..."
-  div class="panel panel--side"
+  .panel.panel--side
     div class="panel__header panel__header--alt"
       span class="game__heading" Game Feed
       - if game.started?
@@ -77,4 +77,6 @@ div class="game-page"
     div class="panel__header panel__header--sub"
       span Books
     div class="hand"
-
+      div class="playing-cards playing-cards--books"
+        - current_player.books.each do |book|
+          img src="/img/#{book.first.rank}Hearts.svg" alt="Book of #{book.first.rank}s"
