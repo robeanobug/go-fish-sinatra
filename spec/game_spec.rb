@@ -39,6 +39,7 @@ RSpec.describe Game do
     let(:ace_diamonds) { PlayingCard.new('Ace', 'Diamonds') }
     let(:ace_spades) { PlayingCard.new('Ace', 'Spades') }
     let(:two_hearts) { PlayingCard.new('Two', 'Hearts') }
+    let(:two_spades) { PlayingCard.new('Two', 'Spades') }
 
     before do
       setup_game_with_two_players
@@ -57,14 +58,22 @@ RSpec.describe Game do
       end
     end
     context "When the current player's turn changes" do
-      it 'current player goes fishing' do
+      before do
         game.start
         player1.hand = [two_hearts]
         player2.hand = [ace_clubs, king_clubs]
+      end
+      it 'current player goes fishing' do
         game.deck.add_card(ace_hearts)
         result = game.play_round('Twos', player2)
         expect(result.last.current_player_round_result).to include("Go fish")
         expect(game.current_player).to eq(player2)
+      end
+      it 'current player goes fishing and gets requested card' do
+        game.deck.add_card(two_spades)
+        result = game.play_round('Two', player2)
+        expect(result.last.current_player_round_result).to include("Go fish")
+        expect(game.current_player).to eq(player1)
       end
     end
   end

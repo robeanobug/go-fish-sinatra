@@ -1,5 +1,6 @@
 require_relative '../lib/round_result'
-
+require_relative '../lib/card_deck'
+require_relative '../lib/player'
 class Game
   attr_accessor :players, :round_count, :deck, :player_count, :current_player, :rounds_results
   BASE_PLAYER_COUNT = 2
