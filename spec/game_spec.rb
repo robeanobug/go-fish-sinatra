@@ -43,15 +43,8 @@ RSpec.describe Game do
     before do
       setup_game_with_two_players
     end
-
-    xit 'increments a round_counter' do
-      expect(game.round_count).to eq 0
-      game.play_round
-      expect(game.round_count).to eq 1
-    end
     context "When the current player's turn stays" do
-      xit 'current player gets cards from opponent' do
-        # game.opponent = player2
+      it 'current player gets cards from opponent' do
         game.start
         player1.hand = [ace_hearts, king_hearts]
         player2.hand = [ace_clubs, king_clubs]
@@ -59,7 +52,15 @@ RSpec.describe Game do
 
         expect(player1.hand).to include(ace_hearts, king_hearts, ace_clubs)
         expect(player2.hand).to include(king_clubs)
-        expect(result.current_player_result).to include('Ace', 'You', 'Player 2', 'took')
+        expect(result.last.current_player_result).to include('Ace', 'You', 'Player 2', 'took')
+      end
+    end
+    context "When the current player's turn changes" do
+      it 'current player goes fishing' do
+        game.start
+        player1.hand = [two_hearts]
+        player2.hand = [ace_clubs, king_clubs]
+        game.deck.add_card(ace_hearts)
       end
     end
   end

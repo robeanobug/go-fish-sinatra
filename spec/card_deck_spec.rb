@@ -12,4 +12,10 @@ RSpec.describe CardDeck do
   it 'deals a card' do
     expect(deck.deal_card).to be_a(PlayingCard)
   end
+  it 'adds a card' do
+    deck.add_card(PlayingCard.new("Ace", "Clubs"))
+    card = deck.deal_card
+    expect(card.rank).to eq "Ace"
+    expect(card.suit).to eq "Clubs"
+  end
 end

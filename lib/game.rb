@@ -9,7 +9,6 @@ class Game
 
   def initialize(player_count = BASE_PLAYER_COUNT, deck = CardDeck.new)
     @players = []
-    @round_count = 0
     @deck = deck
     @player_count = player_count
     @round_results = []
@@ -31,7 +30,6 @@ class Game
   def play_round(requested_rank, target_player)
     taken_cards = take_cards(requested_rank, target_player)
     fished_card = go_fish unless taken_cards
-    self.round_count += 1
     round_results << RoundResult.new(current_player:, target_player:, requested_rank:, taken_cards:, fished_card:)
   end
   
@@ -53,6 +51,12 @@ class Game
 
   def deal_card
     deck.deal_card
+  end
+
+  def go_fish
+    card = deal_card
+    current_player.add_cards(card)
+    card
   end
 
   def started?

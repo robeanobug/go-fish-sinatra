@@ -5,6 +5,7 @@ require 'capybara'
 require 'capybara/dsl'
 ENV['RACK_ENV'] = 'test'
 require_relative '../server'
+require_relative '../lib/playing_card'
 
 RSpec.describe Server do
   include Capybara::DSL
@@ -57,19 +58,6 @@ RSpec.describe Server do
   end
 
   describe "plays a round" do
-    xit 'displays a round counter that increments one round' do
-      setup_sessions_with_two_players
-      expect(session1).to have_content("Round count: 0")
-      session1.click_on 'Play'
-      expect(session1).to have_content("Round count: 1")
-    end
-    xit 'displays a round counter that increments more than one round' do
-      setup_sessions_with_two_players
-      expect(session1).to have_content("Round count: 0")
-      session1.click_on 'Play'
-      session1.click_on 'Play'
-      expect(session1).to have_content("Round count: 2")
-    end
     it 'displays the game response' do
       setup_sessions_with_two_players
       session1.select 'Aces', from: 'card-rank'
@@ -88,6 +76,25 @@ RSpec.describe Server do
       game_round_result = "Player 1 took 2 Aces from Player 2"
       expect(session1).to have_content(game_round_result)
     end
+    it 'displays the player action if there is a player action to the current player' do
+      setup_sessions_with_two_players
+      Server.game.current_player.hand = [PlayingCard.new('Two', 'Hearts')]
+      session1.driver.refresh
+      session1.select 'Twos', from: 'card-rank'
+      session1.select 'Player 2', from: 'target-player'
+      session1.click_on 'request'
+      session2.driver.refresh
+      player_action = "You drew a "
+      expect(session1).to have_content(player_action)
+    end
+    it 'does not display the player action if there is not a player action' do
+      setup_sessions_with_two_players
+      session1.select 'Aces', from: 'card-rank'
+      session1.select 'Player 2', from: 'target-player'
+      session1.click_on 'request'
+      session2.driver.refresh
+      expect(session1).to have_no_css(".feed__bubble--player-action")
+    end
   end
 
   describe "display hands" do
@@ -101,15 +108,10 @@ RSpec.describe Server do
     end
   end
 
-  # to do
-  # display players hands
-  # display the ranks in the current player's hands
-  # display the opponents
-
   include Rack::Test::Methods
   def app; Server.new; end
   describe "POST/join" do
-    xit 'returns game status via API' do
+    it 'returns game status via API' do
       post '/join', { 'name' => 'Caleb' }.to_json, {
         'Accept' => 'application/json',
         'CONTENT_TYPE' => 'application/json'
@@ -123,7 +125,7 @@ RSpec.describe Server do
       expect(JSON.parse(last_response.body).keys).to include 'players'
     end
     
-    xit 'does not return the api status without the api key' do
+    it 'does not return the api status without the api key' do
       get '/game', nil, {
         'HTTP_AUTHORIZATION' => "Invalid",
         'Accept' => 'application/json'
@@ -150,3 +152,4 @@ RSpec.describe Server do
     end
   end
 end
+ 

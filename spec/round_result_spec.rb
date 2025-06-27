@@ -9,7 +9,7 @@ RSpec.describe RoundResult do
   let(:player3) { Player.new('Player 3') }
   let(:taken_cards) { [PlayingCard.new('Ace', 'Clubs'), PlayingCard.new('Ace', 'Spades')]}
   let(:fished_ace) { PlayingCard.new('Ace', 'Clubs') }
-  let(:fished_two) { PlayingCard.new('2', 'Clubs') }
+  let(:fished_two) { PlayingCard.new('Two', 'Clubs') }
 
   context 'when current player takes a card from target player' do
     let(:result) { RoundResult.new(current_player: player1, target_player: player2, requested_rank: 'Ace', taken_cards:) }
@@ -27,6 +27,9 @@ RSpec.describe RoundResult do
     let(:result) { RoundResult.new(current_player: player1, target_player: player2, requested_rank: 'Ace', fished_card: fished_two) }
     it 'has a game round result for bystanders' do
       expect(result.bystanders_round_result).to include('fish')
+    end
+    it 'has a current player action' do
+      expect(result.current_player_action).to include('You drew')
     end
   end
 end

@@ -13,6 +13,7 @@ div class="game-page"
             li = "Hello, #{player.name}! Waiting for more players..."
   div class="panel panel--side"
     div class="panel__header panel__header--alt"
+      
       / form action="/play" method="post"
       /   span Round count: 
       /   = game.round_count
@@ -24,16 +25,17 @@ div class="game-page"
             div class="feed__bubble feed__bubble--game-action"
               span
                 = result.bystanders_game_response
-          - game.round_results.each do |result|
             div class="feed__response"
               i class="icon ph ph-arrow-bend-down-right"
               div class="feed__bubble feed__bubble--game-response"
                 span
                   = result.bystanders_round_result
-          div class="feed__response"
-            i class="icon ph ph-arrow-bend-down-right"
-            div class="feed__bubble feed__bubble--player-action"
-              span You drew a 7 of Diamonds
+            - unless result.current_player_action.nil?
+              div class="feed__response"
+                i class="icon ph ph-arrow-bend-down-right"
+                div class="feed__bubble feed__bubble--player-action"
+                  span
+                    = result.current_player_action
         form action="/play" method="post" class="player-inputs"
           div class="form-group"
             label for="player" class="form-label" Player 
