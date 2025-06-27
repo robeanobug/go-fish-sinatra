@@ -13,7 +13,7 @@ div class="game-page"
             li = "Hello, #{player.name}! Waiting for more players..."
   div class="panel panel--side"
     div class="panel__header panel__header--alt"
-      span class="game_heading" Game Feed
+      span class="game__heading" Game Feed
       - if game.started?
         div class="badge badge--primary"
           = "#{game.current_player.name}'s Turn"
@@ -68,13 +68,13 @@ div class="game-page"
               = "Request"
   div class="panel panel--sub"
     div class="panel__header panel__header--sub"
-      span Your hand:
+      span Your Hand
     div class="hand"
       div class="playing-cards"
         - current_player.hand.each do |card|
           img src="/img/#{card.rank}#{card.suit}.svg" alt="#{card.rank} of #{card.suit}"
   div class="panel panel--sub"
     div class="panel__header panel__header--sub"
-      span books
+      span Books
     div class="hand"
 
