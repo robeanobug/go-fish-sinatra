@@ -3,14 +3,35 @@ div class="game-page"
     div class="panel__header"
       span class="game-board-heading" Go Fish Game
     div class="players-content"
-        span Players:
+      .player-deck-content
+        span class="game__heading game__heading--players" Players:
         - if game.enough_players?
-          ul
           - game.players.each do |player|
-            li = "#{ player.name }"
+            details class="accordion accordion--player"
+              summary
+                .accordion__label
+                  div
+                    .accordion__data-summary.accordion__data-summary--heading
+                      span class="material-symbols-outlined icon accordion__marker" arrow_right
+                      span = player.name
+                  .accordion__data-summary
+                    span Cards:
+                    strong
+                      div = player.hand.length
+                    span Books: 
+                    strong
+                      div = player.books.length
+              .accordion__content
+                .playing-cards
+                  - player.hand.count.times do
+                    img src="/img/CardBack.svg"
+                .playing-cards 
+                  - player.books.each do |book|
+                    img src="/img/#{book.first.rank}Hearts.svg" alt="Book of #{book.first.rank}s"
         - else
-          - game.players.each do |player|
-            li = "Hello, #{player.name}! Waiting for more players..."
+          ul
+            - game.players.each do |player|
+              li = "Hello, #{player.name}! Waiting for more players..."
   .panel.panel--side
     div class="panel__header panel__header--alt"
       span class="game__heading" Game Feed

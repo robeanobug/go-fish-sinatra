@@ -117,11 +117,11 @@ RSpec.describe Server do
         session1.click_on 'request'
         session2.driver.refresh
       end
-      fit 'should display the book' do
+      it 'should display the book' do
         book_card = Server.game.current_player.books.first.first
         card_rank = book_card.rank
 
-        session1.within ".playing-cards--books" do   
+        session1.within ".playing-cards--books" do
           expect(session1).to have_css("img[alt='Book of #{card_rank}s']")
         end
       end
@@ -136,6 +136,12 @@ RSpec.describe Server do
 
       expect(session1).to have_css("img[alt='#{card_rank} of #{card_suit}']")
       expect(session2).to have_no_css("img[alt='#{card_rank} of #{card_suit}']")
+    end
+  end
+describe 'display player content' do
+    fit 'has an accordion' do
+      setup_sessions_with_two_players
+      expect(session1).to have_css(".accordion")
     end
   end
 
