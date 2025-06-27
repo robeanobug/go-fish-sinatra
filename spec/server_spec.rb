@@ -44,56 +44,68 @@ RSpec.describe Server do
   end
 
   it 'allows multiple players to join game' do
-    [ session1, session2 ].each_with_index do |session, index|
-      player_name = "Player #{index + 1}"
-      session.visit '/'
-      session.fill_in :name, with: player_name
-      session.click_on 'Join'
-      expect(session).to have_content('Players')
-      expect(session).to have_css('li', text: player_name)
-    end
+    setup_sessions_with_two_players
+
     expect(session2).to have_content('Player 1')
     session1.driver.refresh
     expect(session1).to have_content('Player 2')
   end
 
   describe "plays a round" do
-    it 'displays the game response' do
-      setup_sessions_with_two_players
-      session1.select 'Aces', from: 'card-rank'
-      session1.select 'Player 2', from: 'target-player'
-      session1.click_on 'request'
-      session2.driver.refresh
-      game_action = "Player 1 asked Player 2 for any Aces"
-      expect(session1).to have_content(game_action)
+    context 'when the current player gets the cards from target' do
+      before do
+        setup_sessions_with_two_players
+        session1.select 'Aces', from: 'card-rank'
+        session1.select 'Player 2', from: 'target-player'
+        session1.click_on 'request'
+        session2.driver.refresh
+      end
+      it 'displays the game response' do
+        game_action = "Player 1 asked Player 2 for any Aces"
+        expect(session1).to have_content(game_action)
+      end
+      it 'displays the game round result' do
+        game_round_result = "Player 1 took 2 Aces from Player 2"
+        expect(session1).to have_content(game_round_result)
+      end
+      it 'does not display the player action if there is not a player action' do
+        expect(session1).to have_no_css(".feed__bubble--player-action")
+      end
     end
-    it 'displays the game round result' do
-      setup_sessions_with_two_players
-      session1.select 'Aces', from: 'card-rank'
-      session1.select 'Player 2', from: 'target-player'
-      session1.click_on 'request'
-      session2.driver.refresh
-      game_round_result = "Player 1 took 2 Aces from Player 2"
-      expect(session1).to have_content(game_round_result)
+    context 'when the current player goes fishing' do
+      before do
+        setup_sessions_with_two_players
+        Server.game.current_player.hand = [PlayingCard.new('Two', 'Hearts')]
+        Server.game.players.last.hand = [PlayingCard.new('Ace', 'Hearts')]
+        session1.driver.refresh
+        session1.select 'Twos', from: 'card-rank'
+        session1.select 'Player 2', from: 'target-player'
+        session1.click_on 'request'
+        session2.driver.refresh
+      end
+      it 'displays the player action if there is a player action to the current player' do
+        player_action = "You drew a "
+        expect(session1).to have_content(player_action)
+      end
+      it 'should display the next player name' do
+        expect(session1).to have_content("#{Server.game.players.last.name}'s Turn")
+      end
     end
-    it 'displays the player action if there is a player action to the current player' do
-      setup_sessions_with_two_players
-      Server.game.current_player.hand = [PlayingCard.new('Two', 'Hearts')]
-      session1.driver.refresh
-      session1.select 'Twos', from: 'card-rank'
-      session1.select 'Player 2', from: 'target-player'
-      session1.click_on 'request'
-      session2.driver.refresh
-      player_action = "You drew a "
-      expect(session1).to have_content(player_action)
-    end
-    it 'does not display the player action if there is not a player action' do
-      setup_sessions_with_two_players
-      session1.select 'Aces', from: 'card-rank'
-      session1.select 'Player 2', from: 'target-player'
-      session1.click_on 'request'
-      session2.driver.refresh
-      expect(session1).to have_no_css(".feed__bubble--player-action")
+
+    context "When it is not your turn" do
+      before do
+        setup_sessions_with_two_players
+      end
+      it 'should have disabled buttons' do
+        expect(session1).to have_no_css(".btn--disabled")
+        expect(session2).to have_css(".btn--disabled")
+      end
+      it 'should have disabled form inputs' do
+        expect(session1).to_not have_selector(:field, 'card-rank', readonly: true)
+        expect(session1).to_not have_selector(:field, 'target-player', readonly: true)
+        expect(session2).to have_selector(:field, 'card-rank', readonly: true)
+        expect(session2).to have_selector(:field, 'target-player', readonly: true)
+      end
     end
   end
 

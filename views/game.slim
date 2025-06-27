@@ -36,20 +36,36 @@ div class="game-page"
                   span
                     = result.current_player_action
         form action="/play" method="post" class="player-inputs"
-          div class="form-group"
-            label for="player" class="form-label" Player 
-            select name="target-player" id="target-player" class="form-control form-control--small"
-              - game.players.each do |player|
-                - unless player.name == current_player.name
-                    option = player.name
-          div class="form-group"
-            label for="card-rank" class="form-label" Card Rank 
-            select name="card-rank" id="card-rank" class="form-control form-control--small"
-              - displayed_ranks = []
-              - current_player.ranks.each do |rank|
-                  option = rank
-          button class="btn btn--primary btn--small" id="request"
-            = "Ask target-player for card-rank"
+          - if current_player == game.current_player
+            div class="form-group"
+              label for="player" class="form-label" Player 
+              select name="target-player" id="target-player" class="form-control form-control--small"
+                - game.players.each do |player|
+                  - unless player.name == current_player.name
+                      option = player.name
+            div class="form-group"
+              label for="card-rank" class="form-label" Card Rank 
+              select name="card-rank" id="card-rank" class="form-control form-control--small"
+                - displayed_ranks = []
+                - current_player.ranks.each do |rank|
+                    option = rank
+            button class="btn btn--primary btn--small" id="request"
+              = "Request"
+          - else
+            div class="form-group"
+              label for="player" class="form-label" Player 
+              select name="target-player" id="target-player" class="form-control form-control--small" readonly="true"
+                - game.players.each do |player|
+                  - unless player.name == current_player.name
+                      option = player.name
+            div class="form-group"
+              label for="card-rank" class="form-label" Card Rank 
+              select name="card-rank" id="card-rank" class="form-control form-control--small" readonly="true"
+                - displayed_ranks = []
+                - current_player.ranks.each do |rank|
+                    option = rank
+            button class="btn btn--primary btn--small btn--disabled" id="request"
+              = "Request"
   div class="panel panel--sub"
     div class="panel__header panel__header--sub"
       span Your hand:
