@@ -16,6 +16,7 @@ class Game
   end
 
   def start
+    deck.shuffle!
     deal_cards
     self.current_player = players.first
   end
@@ -38,16 +39,24 @@ class Game
   
   def deal_cards
     if players.length >= PLAYER_COUNT_THRESHOLD
-      Game::SMALL_HAND_SIZE.times do
-        players.each do |player|
-          player.add_cards(deal_card)
-        end
-      end
+      deal_less_cards
     else
-      Game::BASE_HAND_SIZE.times do
-        players.each do |player|
-          player.add_cards(deal_card)
-        end
+      deal_more_cards
+    end
+  end
+
+  def deal_less_cards
+    Game::SMALL_HAND_SIZE.times do
+      players.each do |player|
+        player.add_cards(deal_card)
+      end
+    end
+  end
+
+  def deal_more_cards
+    Game::BASE_HAND_SIZE.times do
+      players.each do |player|
+        player.add_cards(deal_card)
       end
     end
   end

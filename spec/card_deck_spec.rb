@@ -19,7 +19,7 @@ RSpec.describe CardDeck do
     expect(card.suit).to eq "Clubs"
   end
   describe '#shuffle!' do
-    fit 'should shuffle the deck' do
+    it 'should shuffle the deck' do
       unshuffled_deck = deck.cards.dup
       deck.shuffle!
       expect(unshuffled_deck).to match_array deck.cards

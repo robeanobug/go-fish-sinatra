@@ -21,8 +21,8 @@ RSpec.describe Server do
     Server.reset_state!
   end
 
-  let(:session1) { Capybara::Session.new(:selenium_chrome_headless, Server.new) }
-  let(:session2) { Capybara::Session.new(:selenium_chrome_headless, Server.new) }
+  let(:session1) { Capybara::Session.new(:selenium_chrome, Server.new) }
+  let(:session2) { Capybara::Session.new(:selenium_chrome, Server.new) }
 
   def setup_sessions_with_two_players
     [ session1, session2 ].each_with_index do |session, index|
@@ -33,6 +33,29 @@ RSpec.describe Server do
     end
     expect(session1).to have_content("Player 1")
     session1.driver.refresh
+  end
+
+  def deal_unshuffled_cards
+    clear_books_and_hands
+    unshuffle_deck
+    redeal_cards
+    session1.driver.refresh
+    session2.driver.refresh
+  end
+
+  def unshuffle_deck
+    Server.game.deck = CardDeck.new
+  end
+
+  def redeal_cards
+    Server.game.deal_cards
+  end
+
+  def clear_books_and_hands
+    Server.game.players.each do |player|
+      player.books = []
+      player.hand = []
+    end
   end
 
   it 'is possible to join a game' do
@@ -55,6 +78,7 @@ RSpec.describe Server do
     context 'when the current player gets the cards from target' do
       before do
         setup_sessions_with_two_players
+        deal_unshuffled_cards
         session1.select 'Aces', from: 'card-rank'
         session1.select 'Player 2', from: 'target-player'
         session1.click_on 'request'
@@ -112,6 +136,7 @@ RSpec.describe Server do
     context "When a player creates a book" do
       before do
         setup_sessions_with_two_players
+        deal_unshuffled_cards
         session1.select 'Aces', from: 'card-rank'
         session1.select 'Player 2', from: 'target-player'
         session1.click_on 'request'
@@ -120,7 +145,6 @@ RSpec.describe Server do
       it 'should display the book' do
         book_card = Server.game.current_player.books.first.first
         card_rank = book_card.rank
-
         session1.within ".playing-cards--books" do
           expect(session1).to have_css("img[alt='Book of #{card_rank}s']")
         end
@@ -138,7 +162,7 @@ RSpec.describe Server do
       expect(session2).to have_no_css("img[alt='#{card_rank} of #{card_suit}']")
     end
   end
-describe 'display player content' do
+  describe 'display player content' do
     it 'has an accordion' do
       setup_sessions_with_two_players
       expect(session1).to have_css(".accordion")
@@ -206,4 +230,3 @@ describe 'display player content' do
     end
   end
 end
- 
