@@ -21,8 +21,8 @@ RSpec.describe Server do
     Server.reset_state!
   end
 
-  let(:session1) { Capybara::Session.new(:selenium_chrome, Server.new) }
-  let(:session2) { Capybara::Session.new(:selenium_chrome, Server.new) }
+  let(:session1) { Capybara::Session.new(:selenium_chrome_headless, Server.new) }
+  let(:session2) { Capybara::Session.new(:selenium_chrome_headless, Server.new) }
 
   def setup_sessions_with_two_players
     [ session1, session2 ].each_with_index do |session, index|
@@ -183,6 +183,18 @@ RSpec.describe Server do
         expect(session1).to have_content(opponent.hand.count)
         expect(session1).to have_content(opponent.books.count)
       end
+    end
+  end
+
+  describe 'scroll' do
+    xit 'should scroll when there are too many cards' do
+      setup_sessions_with_two_players
+      deal_unshuffled_cards
+      session1.click_on 'request'
+      session1.click_on 'request'
+      session1.click_on 'request'
+      session1.click_on 'request'
+      binding.irb
     end
   end
 
