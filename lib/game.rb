@@ -103,8 +103,4 @@ class Game
     winner = players.max { |player| player.books.count }
     players.select { |player| winner.books.count == player.books.count }
   end
-
-  def winners_string(winners)
-    winners.map { |winner| winner.name }.join(' and ')
-  end
 end

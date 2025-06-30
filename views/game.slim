@@ -61,7 +61,10 @@ div class="game-page"
                 i class="icon ph ph-arrow-bend-down-right"
                 div class="feed__bubble feed__bubble--player-action"
                   span
-                    = result.current_player_action
+                    - if current_player == result.current_player
+                      = result.current_player_action
+                    - else
+                      = result.bystanders_player_action
         form action="/play" method="post" class="player-inputs"
           - if current_player == game.current_player && !game.over?
             div class="form-group"

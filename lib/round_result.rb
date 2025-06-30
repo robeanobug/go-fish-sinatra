@@ -30,16 +30,17 @@ class RoundResult
     "You drew a #{fished_card.rank} of #{fished_card.suit}" if fished_card
   end
 
+  def bystanders_player_action
+    return "#{current_player.name} is out of cards! They drew a card" if fished_card && requested_rank.nil?
+    "#{current_player.name} drew a card" if fished_card
+  end
+
   def winner_output
     return if winners.nil?
     return "The winner is #{winners.first.name}" if winners.count == 1
     "It's a tie. The winners are #{ winners_string }!"
 
   end
-
-  # def bystanders_played_action
-    
-  # end
 
   def current_player_round_result
     return if winners

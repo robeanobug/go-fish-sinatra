@@ -21,8 +21,8 @@ RSpec.describe Server do
     Server.reset_state!
   end
 
-  let(:session1) { Capybara::Session.new(:selenium_chrome, Server.new) }
-  let(:session2) { Capybara::Session.new(:selenium_chrome, Server.new) }
+  let(:session1) { Capybara::Session.new(:selenium_chrome_headless, Server.new) }
+  let(:session2) { Capybara::Session.new(:selenium_chrome_headless, Server.new) }
 
   def setup_sessions_with_two_players
     [ session1, session2 ].each_with_index do |session, index|
@@ -100,6 +100,7 @@ RSpec.describe Server do
     context 'when the current player goes fishing' do
       before do
         setup_sessions_with_two_players
+        deal_unshuffled_cards
         Server.game.current_player.hand = [PlayingCard.new('Two', 'Hearts')]
         Server.game.players.last.hand = [PlayingCard.new('Ace', 'Hearts')]
         session1.driver.refresh
@@ -108,9 +109,12 @@ RSpec.describe Server do
         session1.click_on 'request'
         session2.driver.refresh
       end
-      it 'displays the player action if there is a player action to the current player' do
-        player_action = "You drew a "
-        expect(session1).to have_content(player_action)
+      it 'displays the player action if there is a player action to the current player but not other players' do
+        personalized_player_action = "You drew a"
+        player_action = "#{Server.game.players.first.name} drew a card"
+        expect(session1).to have_content(personalized_player_action)
+        expect(session2).to have_no_content(personalized_player_action)
+        expect(session2).to have_content(player_action)
       end
       it 'should display the next player name' do
         expect(session1).to have_content("#{Server.game.players.last.name}'s Turn")
@@ -205,25 +209,13 @@ RSpec.describe Server do
       setup_sessions_with_two_players
       deal_unshuffled_cards
     end
-    it 'should decare a winner' do
+    it 'should declare a winner' do
       loop do
+        sleep(0.5)
         session1.click_on 'request'
-        expect(session1).to have_content("Ace")
-        exit if Server.game.over?
+        break if Server.game.over?
       end
       expect(session1).to have_content("winner")
-    end
-  end
-
-  describe 'scroll' do
-    xit 'should scroll when there are too many cards' do
-      setup_sessions_with_two_players
-      deal_unshuffled_cards
-      session1.click_on 'request'
-      session1.click_on 'request'
-      session1.click_on 'request'
-      session1.click_on 'request'
-      binding.irb
     end
   end
 

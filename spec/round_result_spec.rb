@@ -31,11 +31,17 @@ RSpec.describe RoundResult do
     it 'has a current player action' do
       expect(result.current_player_action).to include('You drew')
     end
+    it 'has a bystanders_player_action' do
+      expect(result.bystanders_player_action).to include(player1.name, "drew", "card")
+    end
   end
   context 'when a current player did not have cards at the beginning of the turn' do
     let(:result) { RoundResult.new(current_player: player1, target_player: player2, requested_rank: nil, fished_card: fished_two) }
-    it 'should say the current player is out of cards and drew a card' do
+    it 'should tell the current player is out of cards and drew a card' do
       expect(result.current_player_action).to include("out of cards")
+    end
+    it 'should not specify what card was drawn to other players' do
+      expect(result.bystanders_player_action).to include("out of cards", "drew a card", player1.name)
     end
   end
 
