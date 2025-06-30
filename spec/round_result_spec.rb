@@ -32,4 +32,21 @@ RSpec.describe RoundResult do
       expect(result.current_player_action).to include('You drew')
     end
   end
+  context 'when a current player did not have cards at the beginning of the turn' do
+    let(:result) { RoundResult.new(current_player: player1, target_player: player2, requested_rank: nil, fished_card: fished_two) }
+    it 'should say the current player is out of cards and drew a card' do
+      expect(result.current_player_action).to include("out of cards")
+    end
+  end
+
+  context 'handle winner output' do
+    let(:result) { RoundResult.new(winners: [player1]) }
+    it 'should display a winner if there is a winner' do
+      expect(result.winner_output).to include(player1.name, "winner")
+    end
+    let(:result) { RoundResult.new(winners: [player1, player2]) }
+    it 'should display a tie if tie' do
+      expect(result.winner_output).to include(player1.name, player2.name,  "tie")
+    end
+  end
 end

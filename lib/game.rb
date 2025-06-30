@@ -21,6 +21,10 @@ class Game
     self.current_player = players.first
   end
 
+  def over?
+    deck.empty? && players.all? { |player| player.out_of_cards? }
+  end
+
   def add_player(player)
     players << player
   end
@@ -33,6 +37,7 @@ class Game
     taken_cards = take_cards(requested_rank, target_player)
     fished_card = go_fish unless taken_cards
     rounds_results << RoundResult.new(current_player:, target_player:, requested_rank:, taken_cards:, fished_card:)
+    return rounds_results << RoundResult.new(winners: find_winners) if over?
     change_turns_if_possible(requested_rank, fished_card)
     rounds_results
   end
@@ -73,6 +78,7 @@ class Game
 
   def change_turns_if_possible(requested_rank, fished_card)
     return if fished_card.nil?
+    return if requested_rank.nil?
     unless requested_rank == fished_card.rank
       current_player_index = players.index(current_player) + 1
       self.current_player = players[current_player_index % players.count]
@@ -91,5 +97,14 @@ class Game
       return cards
     end
     nil
+  end
+  
+  def find_winners
+    winner = players.max { |player| player.books.count }
+    players.select { |player| winner.books.count == player.books.count }
+  end
+
+  def winners_string(winners)
+    winners.map { |winner| winner.name }.join(' and ')
   end
 end

@@ -76,6 +76,35 @@ RSpec.describe Game do
         expect(game.current_player).to eq(player1)
       end
     end
+
+    context "When the current player has no cards due to creating a book" do
+      before do
+        game.start
+        player1.hand = [ace_spades, ace_hearts, ace_diamonds]
+        player2.hand = [ace_clubs]
+        game.play_round("Ace", player2)
+      end
+      it 'should deal a card to the current player' do
+        results = game.play_round(nil, player2)
+        expect(player1.hand.count).to eq 1
+        expect(game.current_player).to eq(player1)
+        expect(results.last.current_player_action).to include("out of cards")
+      end
+    end
+
+    context "When the current player has no cards due to having stolen cards" do
+      before do
+        game.start
+        player1.hand = []
+        player2.hand = [ace_clubs]
+        game.play_round(nil, player2)
+      end
+      it 'should deal a card to the current player' do
+        expect(player1.hand.count).to eq 1
+        results = game.play_round(nil, player2)
+        expect(results.last.current_player_action).to include("out of cards")
+      end
+    end
   end
 
   describe '#start' do
@@ -98,5 +127,21 @@ RSpec.describe Game do
   it 'should return true if game has started' do
     setup_game_with_two_players
     expect(game.started?).to be false
+  end
+
+  context "when the game is over" do
+    let(:ace_hearts) { PlayingCard.new('Ace', 'Hearts') }
+    let(:ace_clubs) { PlayingCard.new('Ace', 'Clubs') }
+    let(:ace_diamonds) { PlayingCard.new('Ace', 'Diamonds') }
+    let(:ace_spades) { PlayingCard.new('Ace', 'Spades') }
+
+    before do
+      setup_game_with_two_players
+      game.start
+      game.players.each { |player| player.books = [] }
+      game.deck.cards = []
+      player1.hand = [ace_diamonds, ace_spades]
+      player2.hand = [ace_hearts, ace_clubs]
+    end
   end
 end

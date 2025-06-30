@@ -43,6 +43,11 @@ div class="game-page"
       div class="feed__container"
         div class="feed__output"
           - game.rounds_results.reverse.each do |result|
+            - if result.winner_output
+              div class="feed__bubble feed__bubble--game-action"
+                span 
+                  = result.winner_output
+              - next
             div class="feed__bubble feed__bubble--game-action"
               span
                 = result.bystanders_game_response
@@ -58,7 +63,7 @@ div class="game-page"
                   span
                     = result.current_player_action
         form action="/play" method="post" class="player-inputs"
-          - if current_player == game.current_player
+          - if current_player == game.current_player && !game.over?
             div class="form-group"
               label for="player" class="form-label" Player 
               select name="target-player" id="target-player" class="form-control form-control--small"
@@ -83,7 +88,6 @@ div class="game-page"
             div class="form-group"
               label for="card-rank" class="form-label" Card Rank 
               select name="card-rank" id="card-rank" class="form-control form-control--small" readonly="true"
-                - displayed_ranks = []
                 - current_player.ranks.each do |rank|
                     option = rank
             button class="btn btn--primary btn--small btn--disabled" id="request"

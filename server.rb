@@ -50,7 +50,7 @@ class Server < Sinatra::Base
   post '/play' do
     target_player_name = params['target-player']
     target_player = find_player_from_name(target_player_name)
-    requested_rank = params['card-rank'].chop
+    requested_rank = params['card-rank']&.chop
     self.class.game.play_round(requested_rank, target_player)
     respond_to do |f|
       f.html do

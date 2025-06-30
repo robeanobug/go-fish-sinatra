@@ -38,8 +38,18 @@ RSpec.describe Player do
     player.remove_cards([ace_clubs, ace_hearts])
     expect(player.hand).to eq([])
   end
-  it 'should tell what ranks are in the player hand' do
-    player.add_cards([ace_clubs, ace_hearts])
-    expect(player.ranks).to eq(['Aces'])
+  it 'returns true if player is out of cards' do
+    player.hand = []
+    expect(player.out_of_cards?).to be true
+  end
+  describe '#ranks' do
+    it 'should tell what ranks are in the player hand' do
+      player.add_cards([ace_clubs, ace_hearts])
+      expect(player.ranks).to eq(['Aces'])
+    end
+    it 'should return [] if player has no cards' do
+      player.hand = []
+      expect(player.ranks).to eq []
+    end
   end
 end

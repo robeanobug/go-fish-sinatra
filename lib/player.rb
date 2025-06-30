@@ -27,6 +27,10 @@ class Player
     self.hand -= cards
   end
 
+  def out_of_cards?
+    hand.empty?
+  end
+
   private
 
   def create_book_if_possible

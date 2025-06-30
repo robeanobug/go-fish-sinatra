@@ -21,8 +21,8 @@ RSpec.describe Server do
     Server.reset_state!
   end
 
-  let(:session1) { Capybara::Session.new(:selenium_chrome_headless, Server.new) }
-  let(:session2) { Capybara::Session.new(:selenium_chrome_headless, Server.new) }
+  let(:session1) { Capybara::Session.new(:selenium_chrome, Server.new) }
+  let(:session2) { Capybara::Session.new(:selenium_chrome, Server.new) }
 
   def setup_sessions_with_two_players
     [ session1, session2 ].each_with_index do |session, index|
@@ -150,6 +150,20 @@ RSpec.describe Server do
         end
       end
     end
+
+    context "When a player has no cards because their cards were put into books" do
+      before do
+        setup_sessions_with_two_players
+        deal_unshuffled_cards
+      end
+      it 'should draw a card for current player' do
+        8.times do 
+          session1.click_on 'request'
+          expect(session1).to have_content("Ace")
+        end
+        expect(session1).to have_content("out of cards")
+      end
+    end
   end
 
   describe "display hands" do
@@ -183,6 +197,21 @@ RSpec.describe Server do
         expect(session1).to have_content(opponent.hand.count)
         expect(session1).to have_content(opponent.books.count)
       end
+    end
+  end
+
+  context "when there is a winner" do
+    before do
+      setup_sessions_with_two_players
+      deal_unshuffled_cards
+    end
+    it 'should decare a winner' do
+      loop do
+        session1.click_on 'request'
+        expect(session1).to have_content("Ace")
+        exit if Server.game.over?
+      end
+      expect(session1).to have_content("winner")
     end
   end
 
