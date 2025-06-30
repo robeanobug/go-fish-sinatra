@@ -29,8 +29,14 @@ class Server < Sinatra::Base
     player = create_player
     session[:current_user] = create_user(player)
     respond_to do |f|
-      f.json { json api_key: session[:current_user].api_key }
-      f.html { redirect '/game' }
+      f.json do
+        json api_key: session[:current_user].api_key
+        
+      end
+      f.html do
+        redirect "/game"
+        slim :game, locals: { game: self.class.game, current_player: find_player_from_user(session[:current_user]) }
+      end
     end
   end
 
@@ -67,6 +73,8 @@ class Server < Sinatra::Base
 
   def create_player
     player = Player.new(params['name'])
+    player_count = params[:player_count]
+    self.class.game.player_count = player_count.to_i if player_count
     self.class.game.add_player(player)
     player
   end

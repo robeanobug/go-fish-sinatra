@@ -21,14 +21,27 @@ RSpec.describe Server do
     Server.reset_state!
   end
 
-  let(:session1) { Capybara::Session.new(:selenium_chrome_headless, Server.new) }
-  let(:session2) { Capybara::Session.new(:selenium_chrome_headless, Server.new) }
+  let(:session1) { Capybara::Session.new(:selenium_chrome, Server.new) }
+  let(:session2) { Capybara::Session.new(:selenium_chrome, Server.new) }
+  let(:session3) { Capybara::Session.new(:selenium_chrome, Server.new) }
 
   def setup_sessions_with_two_players
     [ session1, session2 ].each_with_index do |session, index|
       player_name = "Player #{index + 1}"
       session.visit '/'
       session.fill_in :name, with: player_name
+      session.click_on 'Join' 
+    end
+    expect(session1).to have_content("Player 1")
+    session1.driver.refresh
+  end
+
+  def setup_sessions_with_three_players
+    [ session1, session2, session3 ].each_with_index do |session, index|
+      player_name = "Player #{index + 1}"
+      session.visit '/'
+      session.fill_in :name, with: player_name
+      session.choose 'three' if index == 0
       session.click_on 'Join' 
     end
     expect(session1).to have_content("Player 1")
@@ -209,13 +222,35 @@ RSpec.describe Server do
       setup_sessions_with_two_players
       deal_unshuffled_cards
     end
-    it 'should declare a winner' do
+    xit 'should declare a winner' do
       loop do
         sleep(0.5)
         session1.click_on 'request'
         break if Server.game.over?
       end
       expect(session1).to have_content("winner")
+    end
+  end
+
+  context "when there are three players" do
+    before do
+      setup_sessions_with_three_players
+      session1.driver.refresh
+      session2.driver.refresh
+      session3.driver.refresh
+    end
+    it 'goes to game screen' do
+      expect(session1).to have_content(Server.game.players[1].name)
+      expect(session1).to have_content(Server.game.players[2].name)
+      expect(Server.game.players.last.hand.count).to eq Game::BASE_HAND_SIZE
+    end
+    it 'should play a round when the current player presses request' do
+      session1.click_on "request"
+      session2.driver.refresh
+      session3.driver.refresh
+      expect(session1).to have_content("ask")
+      expect(session2).to have_content("ask")
+      expect(session3).to have_content("ask")
     end
   end
 

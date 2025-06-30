@@ -143,5 +143,31 @@ RSpec.describe Game do
       player1.hand = [ace_diamonds, ace_spades]
       player2.hand = [ace_hearts, ace_clubs]
     end
+    it 'should display the winner' do
+      result = game.play_round("Ace", player2)
+      expect(result.last.winner_output).to include("winner", player1.name)
+    end
+  end
+
+  context "when the game ends in a tie" do
+    let(:ace_hearts) { PlayingCard.new('Ace', 'Hearts') }
+    let(:ace_clubs) { PlayingCard.new('Ace', 'Clubs') }
+    let(:ace_diamonds) { PlayingCard.new('Ace', 'Diamonds') }
+    let(:ace_spades) { PlayingCard.new('Ace', 'Spades') }
+
+    before do
+      setup_game_with_two_players
+      game.start
+      game.players.each { |player| player.books = [] }
+      game.deck.cards = []
+      player2.books = [[ace_diamonds, ace_spades, ace_hearts, ace_clubs]]
+
+      player1.hand = [ace_diamonds, ace_spades]
+      player2.hand = [ace_hearts, ace_clubs]
+    end
+    it 'should display the winners' do
+      result = game.play_round("Ace", player2)
+      expect(result.last.winner_output).to include("winner", player1.name, player2.name)
+    end
   end
 end
