@@ -25,6 +25,9 @@ GEM
     ffi (1.17.2-x86_64-darwin)
     ffi (1.17.2-x86_64-linux-gnu)
     ffi (1.17.2-x86_64-linux-musl)
+    json_matchers (0.11.1)
+      json_schema
+    json_schema (0.21.0)
     listen (3.9.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
@@ -132,6 +135,7 @@ PLATFORMS
 DEPENDENCIES
   capybara
   capybara-selenium
+  json_matchers
   puma
   rack-contrib
   rack-test
