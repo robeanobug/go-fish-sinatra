@@ -1,0 +1,12 @@
+{
+  "id": "file:/card-deck.json#",
+  "type": "object",
+  "properties": {
+    "cards": {
+      "type": "array",
+      "items": {
+        "$ref": "file:/playing-card.json#"
+      }
+    }
+  }
+}

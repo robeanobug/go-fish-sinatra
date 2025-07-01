@@ -103,4 +103,13 @@ class Game
     winner = players.max { |player| player.books.count }
     players.select { |player| winner.books.count == player.books.count }
   end
+
+  def attributes
+    {
+      "players" => players.map { |player| player.attributes },
+      "deck" => deck.attributes,
+      "player_count" => player_count,
+      "rounds_results" =>  rounds_results
+    }
+  end
 end

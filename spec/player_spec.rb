@@ -52,4 +52,10 @@ RSpec.describe Player do
       expect(player.ranks).to eq []
     end
   end
+
+  describe "#attributes" do
+    it 'should have a name hand and books' do
+      expect(player.attributes).to include("name", "hand", "books")
+    end
+  end
 end

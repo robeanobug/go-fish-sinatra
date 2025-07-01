@@ -31,6 +31,14 @@ class Player
     hand.empty?
   end
 
+  def attributes
+    {
+      "name" => name,
+      "hand" => hand,
+      "books" => books
+    }
+  end
+
   private
 
   def create_book_if_possible

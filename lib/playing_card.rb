@@ -7,4 +7,11 @@ class PlayingCard
     @rank = rank
     @suit = suit
   end
+
+  def attributes
+    {
+      "rank" => rank,
+      "suit" => suit
+    }
+  end
 end

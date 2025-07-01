@@ -1,0 +1,31 @@
+{
+  "id": "file:/round-result.json#",
+  "type": "object",
+  "required": ["current_player", "target_player", "fished_card", "taken_cards", "requested_rank", "winners"],
+  "properties": {
+    "current_player": {
+      "$ref": "file:/player.json#"
+    },
+    "target_player": {
+      "$ref": "file:/player.json#"
+    },
+    "fished_card": {
+      "$ref": "file:/playing-card.json#"
+    },
+    "taken_cards": {
+      "type": "array",
+      "items": {
+        "$ref": "file:/playing-card.json#"
+      }
+    },
+    "requested_rank": {
+      "type": "string"
+    },
+    "winners": {
+      "type": "array",
+      "items": {
+        "$ref": "file:/player.json#"
+      }
+    }
+  }
+}

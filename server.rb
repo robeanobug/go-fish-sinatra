@@ -31,7 +31,6 @@ class Server < Sinatra::Base
     respond_to do |f|
       f.json do
         json api_key: session[:current_user].api_key
-        
       end
       f.html do
         redirect "/game"
@@ -47,7 +46,8 @@ class Server < Sinatra::Base
       f.json do
         return error 401 if session[:current_user].nil?
         json api_key: session[:current_user].api_key
-        json players: self.class.game.players
+        # json players: self.class.game.players
+        json self.class.game.attributes
       end
       f.html { slim :game, locals: { game: self.class.game, current_player: find_player_from_user(session[:current_user]) } }
     end

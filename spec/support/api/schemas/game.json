@@ -1,0 +1,25 @@
+{
+  "id": "file:/game.json#",
+  "type": "object",
+  "required": ["players", "deck", "player_count", "rounds_results"],
+  "properties": {
+    "players": {
+      "type": "array",
+      "items": {
+        "$ref": "file:/player.json#"
+      }
+    },
+    "deck": {
+      "$ref": "file:/card-deck.json#"
+    },
+    "player_count": {
+      "type": "integer"
+    },
+    "rounds_results": {
+      "type": "array",
+      "items": {
+        "$ref": "file:/round-result.json#"
+      }
+    }
+  }
+}

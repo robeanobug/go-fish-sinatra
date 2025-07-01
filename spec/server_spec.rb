@@ -254,6 +254,10 @@ RSpec.describe Server do
     end
   end
 
+  context "when there are five players" do
+    
+  end
+
   include Rack::Test::Methods
   def app; Server.new; end
   describe "POST/join" do
@@ -268,7 +272,10 @@ RSpec.describe Server do
         'HTTP_AUTHORIZATION' => "Basic #{Base64.encode64(api_key + ':X')}",
         'Accept' => 'application/json'
       }
-      expect(JSON.parse(last_response.body).keys).to include 'players'
+      
+      # expect(JSON.parse(last_response.body).keys).to include 'players'
+      # p last_response
+      expect(last_response).to match_json_schema('game')
     end
     
     it 'does not return the api status without the api key' do

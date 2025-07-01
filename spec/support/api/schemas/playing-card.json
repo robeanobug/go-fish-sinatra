@@ -1,0 +1,13 @@
+{
+  "id": "file:/playing-card.json#",
+  "type": "object",
+  "required": ["rank", "suit"],
+  "properties": {
+    "rank": {
+      "type": "string"
+    },
+    "suit": {
+      "type": "string"
+    }
+  }
+}

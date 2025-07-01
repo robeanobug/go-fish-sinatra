@@ -30,5 +30,11 @@ class CardDeck
   def empty?
     cards.empty?
   end
+
+  def attributes
+    {
+      "cards" => cards.map { |card| card.attributes}
+    }
+  end
 end
 

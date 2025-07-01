@@ -170,4 +170,11 @@ RSpec.describe Game do
       expect(result.last.winner_output).to include("winner", player1.name, player2.name)
     end
   end
+
+  describe "#attributes" do
+    it 'should return a hash of the instance variables' do 
+      game.add_player(Player.new("Player 1"))
+      expect(game.attributes).to include("players", "deck", "player_count", "rounds_results")
+    end
+  end
 end

@@ -36,4 +36,9 @@ RSpec.describe CardDeck do
       expect(deck.empty?).to be false
     end
   end
+  describe "attributes" do
+    it 'should have cards' do
+      expect(deck.attributes).to include("cards")
+    end
+  end
 end

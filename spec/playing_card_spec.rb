@@ -7,4 +7,7 @@ RSpec.describe PlayingCard do
     expect(playing_card.rank).to eq('Two')
     expect(playing_card.suit).to eq('Spades')
   end
+  it 'has attributes rank and suit' do
+    expect(playing_card.attributes).to include("rank", "suit")
+  end
 end
