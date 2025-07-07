@@ -8,4 +8,7 @@ RSpec.describe User do
     expect(user.player).to be_a(Player)
     expect(user.api_key).to eq("key")
   end
+  it 'has a name' do
+    expect(user.name).to be_a(String)
+  end
 end

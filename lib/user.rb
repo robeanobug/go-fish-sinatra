@@ -4,4 +4,7 @@ class User
     @player = player
     @api_key = api_key
   end
+  def name
+    player.name
+  end
 end
