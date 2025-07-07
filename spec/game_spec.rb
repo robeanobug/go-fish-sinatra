@@ -174,7 +174,7 @@ RSpec.describe Game do
   describe "#attributes" do
     it 'should return a hash of the instance variables' do 
       game.add_player(Player.new("Player 1"))
-      expect(game.attributes).to include("players", "deck", "player_count", "rounds_results")
+      expect(game.attributes).to include("players", "player_count", "rounds_results")
     end
   end
 end

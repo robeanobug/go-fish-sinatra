@@ -104,10 +104,10 @@ class Game
     players.select { |player| winner.books.count == player.books.count }
   end
 
-  def attributes
+  def attributes(player_name)
     {
+      "hand" => players.find { |player| player.name == player_name }.display_hand,
       "players" => players.map { |player| player.attributes },
-      "deck" => deck.attributes,
       "player_count" => player_count,
       "rounds_results" =>  rounds_results
     }
