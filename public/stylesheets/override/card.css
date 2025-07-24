@@ -1,0 +1,18 @@
+.card.card--login {
+  display: grid;
+
+  .card__form {
+    display: grid;
+    gap: var(--op-space-x-small);
+  }
+  .card__body {
+    display: grid;
+    /* grid-template-rows: 1fr 1fr 1fr; */
+    gap: var(--op-space-x-small);
+  }
+  .card__players {
+    display: flex;
+    align-items: center;
+    gap: var(--op-space-2x-small)
+  }
+}

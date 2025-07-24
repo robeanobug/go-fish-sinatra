@@ -1,18 +1,19 @@
 body.app-body.flex.justify-center.items-center
 
-  div class="card card--padded"
+  div class="card card--padded card--login"
     div class="card__header"
       span Go Fish Login
-    .card__body.flex.flex-col
-      form action="/join" method="post"
+    .card__body
+      form.card__form action="/join" method="post"
         input#name type="text" name="name" required="true"
         - if game.players.empty?
-          input type="radio" name="player_count" id="two" value="2" class="form-control form-control" checked="checked"
-            label class="form-label" for="two" Two
-          input type="radio" name="player_count" id="three" value="3" class="form-control form-control"
-            label class="form-label" for="three" Three
-          input type="radio" name="player_count" id="four" value="4" class="form-control form-control"
-            label class="form-label" for="four" Four 
-          input type="radio" name="player_count" id="five" value="5" class="form-control form-control"
-            label class="form-label" for="five" Five
+          .card__players
+            input type="radio" name="player_count" id="two" value="2" class="form-control form-control" checked="checked"
+              label class="form-label" for="two" Two
+            input type="radio" name="player_count" id="three" value="3" class="form-control form-control"
+              label class="form-label" for="three" Three
+            input type="radio" name="player_count" id="four" value="4" class="form-control form-control"
+              label class="form-label" for="four" Four 
+            input type="radio" name="player_count" id="five" value="5" class="form-control form-control"
+              label class="form-label" for="five" Five
         button.btn.btn--primary type="submit" Join

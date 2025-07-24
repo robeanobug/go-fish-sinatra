@@ -1,5 +1,6 @@
 /* Override */
 @import "./override/accordion.css";
+@import "./override/card.css";
 
 /* Game Page Content */
 @import "./feed-bubble.css";
