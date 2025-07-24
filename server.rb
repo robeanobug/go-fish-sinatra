@@ -46,8 +46,7 @@ class Server < Sinatra::Base
       f.json do
         return error 401 if session[:current_user].nil?
         json api_key: session[:current_user].api_key
-        # json players: self.class.game.players
-        json self.class.game.attributes
+        json self.class.game.attributes(session[:current_user].name)
       end
       f.html { slim :game, locals: { game: self.class.game, current_player: find_player_from_user(session[:current_user]) } }
     end
@@ -80,7 +79,8 @@ class Server < Sinatra::Base
   end
 
   def find_player_from_user(user)
-    players.find { |player| player.name == user.player.name } 
+    # binding.irb
+    players.find { |player| player.name == user.name } 
   end
 
   def find_player_from_name(name)

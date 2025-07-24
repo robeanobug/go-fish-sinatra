@@ -55,7 +55,12 @@ RSpec.describe Player do
 
   describe "#attributes" do
     it 'should have a name hand and books' do
-      expect(player.attributes).to include("name", "hand", "books")
+      expect(player.attributes).to include("name", "books")
     end
+  end
+
+  it 'should display the hand' do
+    player.hand = [ace_hearts]
+    expect(player.display_hand).to eq(["Ace of Hearts"])
   end
 end

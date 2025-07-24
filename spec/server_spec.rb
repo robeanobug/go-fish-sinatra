@@ -21,9 +21,9 @@ RSpec.describe Server do
     Server.reset_state!
   end
 
-  let(:session1) { Capybara::Session.new(:selenium_chrome, Server.new) }
-  let(:session2) { Capybara::Session.new(:selenium_chrome, Server.new) }
-  let(:session3) { Capybara::Session.new(:selenium_chrome, Server.new) }
+  let(:session1) { Capybara::Session.new(:selenium_chrome_headless, Server.new) }
+  let(:session2) { Capybara::Session.new(:selenium_chrome_headless, Server.new) }
+  let(:session3) { Capybara::Session.new(:selenium_chrome_headless, Server.new) }
 
   def setup_sessions_with_two_players
     [ session1, session2 ].each_with_index do |session, index|
@@ -273,8 +273,7 @@ RSpec.describe Server do
         'Accept' => 'application/json'
       }
       
-      # expect(JSON.parse(last_response.body).keys).to include 'players'
-      # p last_response
+      expect(JSON.parse(last_response.body).keys).to include 'players'
       expect(last_response).to match_json_schema('game')
     end
     
@@ -285,20 +284,44 @@ RSpec.describe Server do
       }
       expect(last_response.status).to eq 401
     end
+
+    it 'returns plays a round via API' do
+      post '/join', { 'name' => 'Caleb' }.to_json, {
+        'Accept' => 'application/json',
+        'CONTENT_TYPE' => 'application/json'
+      }
+      post '/join', { 'name' => 'Robyn' }.to_json, {
+        'Accept' => 'application/json',
+        'CONTENT_TYPE' => 'application/json'
+      }
+      api_key = JSON.parse(last_response.body)['api_key']
+      expect(api_key).not_to be_nil
+      get '/game', nil, {
+        'HTTP_AUTHORIZATION' => "Basic #{Base64.encode64(api_key + ':X')}",
+        'Accept' => 'application/json'
+      }
+      post '/play', { 'target-player' => 'Robyn', 'card-rank' => 'Aces' }.to_json, {
+        'Accept' => 'application/json',
+        'CONTENT_TYPE' => 'application/json'
+      }
+      
+      expect(JSON.parse(last_response.body).keys).to include 'players'
+      expect(last_response).to match_json_schema('game')
+    end
     xit 'does not return the api status if using the wrong api key' do
       post '/join', { 'name' => 'Caleb' }.to_json, {
         'Accept' => 'application/json',
         'CONTENT_TYPE' => 'application/json'
       }
 
-      api_key = JSON.parse(last_response.body)['api_key']
+      # api_key = JSON.parse(last_response.body)['api_key']
 
       post '/join', { 'name' => 'Joe' }.to_json, {
         'Accept' => 'application/json',
         'CONTENT_TYPE' => 'application/json'
       }
       get '/game', nil, {
-        'HTTP_AUTHORIZATION' => "Basic #{Base64.encode64(api_key + ':X')}",
+        'HTTP_AUTHORIZATION' => "Basic foo",
         'Accept' => 'application/json'
       }
       expect(last_response.status).to eq 401

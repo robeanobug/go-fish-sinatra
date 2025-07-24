@@ -34,9 +34,12 @@ class Player
   def attributes
     {
       "name" => name,
-      "hand" => hand,
-      "books" => books
+      "books" => books.map { |book| "#{book.first.rank}"}
     }
+  end
+
+  def display_hand
+    hand.map { |card| "#{card.rank} of #{card.suit}" }  
   end
 
   private
